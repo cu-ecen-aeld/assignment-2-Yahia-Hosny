@@ -11,25 +11,23 @@ void log_debug(const char *message) {
     syslog(LOG_DEBUG, "%s", message);
 }
 
-int main() {
-    openlog("MyUtility", LOG_PID, LOG_USER);
+int main(int argc, char *argv[]) {
+ openlog("MyUtility", LOG_PID, LOG_USER);
+    if (argc != 3) {
+        printf("Usage: %s <filename> <content>\n", argv[0]);
+        return 1;
+    }
+    const char *filename = argv[1];
+    const char *content = argv[2];
 
-    char content[1000];
-    char filename[100];
 
-    printf("Enter the content for the file: ");
-    fgets(content, sizeof(content), stdin);
-
-    printf("Enter the filename: ");
-    fgets(filename, sizeof(filename), stdin);
-
-    FILE *file = fopen(filename, "w");
+    FILE *file = fopen(filename,"w");
     if (file == NULL) {
         log_error("Error opening file");
         return 1;
     }
 
-    if (fprintf(file, "%s", content) < 0) {
+    if (fwrite(content, sizeof(char), strlen(content), file) < 0) {
         log_error("Error writing to file");
         return 1;
     }
@@ -42,7 +40,7 @@ int main() {
     
     closelog();
     
-    printf("File created and content written successfully.\n");
+    printf("File %s created successfully with the content:%s .\n",filename,content);
 
     return 0;
 }

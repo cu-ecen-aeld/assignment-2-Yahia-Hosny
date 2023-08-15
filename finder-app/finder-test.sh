@@ -6,7 +6,7 @@ set -e
 set -u
 
 NUMFILES=10
-WRITESTR=AELD_IS_FUN
+WRITESTR=hi
 WRITEDIR=/tmp/aeld-data
 username=$(cat conf/username.txt)
 
@@ -48,13 +48,14 @@ then
 		exit 1
 	fi
 fi
-#echo "Removing the old writer utility and compiling as a native application"
-#make clean
-#make
+
+echo "Removing the old writer utility and compiling as a native application"
+make clean
+make writer
 
 for i in $( seq 1 $NUMFILES)
 do
-	./writer.sh "$WRITEDIR/${username}$i.txt" "$WRITESTR"
+./writer "$WRITEDIR/"$username"$i.txt" "$WRITESTR"
 done
 
 OUTPUTSTRING=$(./finder.sh "$WRITEDIR" "$WRITESTR")
